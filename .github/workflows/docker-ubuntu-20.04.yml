@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: docker build ./images/linux/ --tag $IMAGE_NAME --file ./images/linux/ubuntu2004.Dockerfile
+        run: docker build ./images/linux/ --tag $IMAGE_NAME --file ./images/linux/ubuntu2004.Dockerfile --compress
   push:
     needs: test
     runs-on: self-hosted
