@@ -13,8 +13,7 @@ toolset="$INSTALLER_SCRIPT_FOLDER/toolset.json"
 LATEST_DOTNET_PACKAGES=$(jq -r '.dotnet.aptPackages[]' $toolset)
 versions=$(jq -r '.dotnet.versions[]' $toolset)
 
-mksamples()
-{
+mksamples() {
     sdk=$1
     sample=$2
     mkdir "$sdk"
@@ -74,10 +73,12 @@ parallel --jobs 0 --halt soon,fail=1 \
     'url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{}/dotnet-sdk-{}-linux-x64.tar.gz"; \
     download_with_retries $url' ::: "${sortedSdks[@]}"
 
-find . -name "*.tar.gz" | parallel --halt soon,fail=1 'extract_dotnet_sdk {}'
+find . -name "dotnet*.tar.gz" | parallel --halt soon,fail=1 'extract_dotnet_sdk {}'
 
 # Smoke test each SDK
 for sdk in $sortedSdks; do
+    # TODO: remove continue later
+    continue
     mksamples "$sdk" "console"
     mksamples "$sdk" "mstest"
     mksamples "$sdk" "xunit"
