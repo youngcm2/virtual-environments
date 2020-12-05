@@ -7,6 +7,7 @@ on:
       - 'images/linux/scripts/**'
       - 'images/linux/toolsets/**'
       - 'images/linux/ubuntu2004.Dockerfile'
+      - '.github/workflows/docker-ubuntu-20.04.yml'
     branches:
       - main
     tags:
