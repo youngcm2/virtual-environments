@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: docker build ./images/linux/ --file ubuntu2004.Dockerfile
+        run: docker build ./images/linux/ --file ./images/linux/ubuntu2004.Dockerfile
   push:
     needs: test
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build image
-        run: docker build ./images/linux/ --file ubuntu2004.Dockerfile --tag $IMAGE_NAME
+        run: docker build ./images/linux/ --file ./images/linux/ubuntu2004.Dockerfile --tag $IMAGE_NAME
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Push image
