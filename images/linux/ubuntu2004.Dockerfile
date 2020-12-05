@@ -216,6 +216,6 @@ RUN sudo mkdir -p /etc/vsts && sudo cp /tmp/ubuntu${OSVERSION}.conf /etc/vsts/ma
 RUN sudo /tmp/scripts/installers/cleanup.sh
 
 WORKDIR /github/runner
-VOLUME /github/runner
+
 # * Required to inherit environment
 ENTRYPOINT [ "/bin/bash", "--login" ]
