@@ -4,17 +4,21 @@
 ##  Desc:  Installs MySQL Client
 ################################################################################
 
+source $HELPER_SCRIPTS/etc-environment.sh
+source $HELPER_SCRIPTS/install.sh
+source $HELPER_SCRIPTS/os.sh
+
 export ACCEPT_EULA=Y
 
-if isUbuntu16 || isUbuntu18 ; then
+if isUbuntu16 || isUbuntu18; then
     apt-get install mysql-client -y
 fi
 
-if isUbuntu20 ; then
+if isUbuntu20; then
     # Install mysql 8 for Ubuntu 20.
 
-    debconf-set-selections <<< 'mysql-apt-config mysql-apt-config/select-server select mysql-8.0'
-    package_version=$(curl https://dev.mysql.com/downloads/repo/apt/ 2> /dev/null | grep "\.deb" | awk -F "[()]" '{print $2}')
+    debconf-set-selections <<<'mysql-apt-config mysql-apt-config/select-server select mysql-8.0'
+    package_version=$(curl https://dev.mysql.com/downloads/repo/apt/ 2>/dev/null | grep "\.deb" | awk -F "[()]" '{print $2}')
     wget https://dev.mysql.com/get/$package_version
     dpkg -i $package_version
     apt update
@@ -38,10 +42,12 @@ if ! command -v mysql; then
     exit 1
 fi
 
-mysql -vvv -e 'CREATE DATABASE smoke_test' -uroot -proot
-mysql -vvv -e 'DROP DATABASE smoke_test' -uroot -proot
-set +e
+if [[ ! -f /.dockerenv ]]; then
+    mysql -vvv -e 'CREATE DATABASE smoke_test' -uroot -proot
+    mysql -vvv -e 'DROP DATABASE smoke_test' -uroot -proot
+    set +e
 
-# Disable mysql.service
-systemctl is-active --quiet mysql.service && systemctl stop mysql.service
-systemctl disable mysql.service
+    # Disable mysql.service
+    systemctl is-active --quiet mysql.service && systemctl stop mysql.service
+    systemctl disable mysql.service
+fi
