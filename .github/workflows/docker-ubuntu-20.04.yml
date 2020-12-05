@@ -1,0 +1,47 @@
+name: Build and publish Docker virtual enviroment for Ubuntu 20.04
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - ubuntu20/*
+  pull_request:
+env:
+  IMAGE_NAME: virtual-environments:ubuntu-20.04
+  DOCKER_BUILDKIT: 1
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: docker build . --file ubuntu2004.Dockerfile
+  push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository }}
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          VERSION=$(echo "$VERSION" | sed -e 's,/,-,i')
+          [ "$VERSION" == "main" ] && VERSION=latest
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+          
+          docker push $IMAGE_NAME
+          
+          #uncomment when ubuntu-20.04 will become ubuntu-latest
+          #docker tag $IMAGE_NAME $IMAGE_ID:ubuntu-latest
+          #docker push $IMAGE_ID:ubuntu-20.04
