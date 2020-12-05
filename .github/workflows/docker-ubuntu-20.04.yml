@@ -1,6 +1,12 @@
 name: Build and publish Docker virtual enviroment for Ubuntu 20.04
 on:
   push:
+    paths:
+      - 'images/linux/config/**'
+      - 'images/linux/post-generation/**'
+      - 'images/linux/scripts/**'
+      - 'images/linux/toolsets/**'
+      - 'images/linux/ubuntu2004.Dockerfile'
     branches:
       - main
     tags:
@@ -15,17 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: docker build ./images/linux/ --file ./images/linux/ubuntu2004.Dockerfile
+        run: docker build ./images/linux/ --tag $IMAGE_NAME --file ./images/linux/ubuntu2004.Dockerfile
   push:
     needs: test
     runs-on: self-hosted
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v2
-      - name: Build image
-        run: docker build ./images/linux/ --file ./images/linux/ubuntu2004.Dockerfile --tag $IMAGE_NAME
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Push image
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository }}
