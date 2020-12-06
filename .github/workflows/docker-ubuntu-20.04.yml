@@ -14,7 +14,7 @@ on:
       - ubuntu20/*
   pull_request:
 env:
-  IMAGE_NAME: virtual-environments:ubuntu-20.04
+  IMAGE_NAME: quay.io/catthehacker/virtual-environments:ubuntu-20.04
   DOCKER_BUILDKIT: 1
 jobs:
   test:
@@ -48,4 +48,4 @@ jobs:
           
           #uncomment when ubuntu-20.04 will become ubuntu-latest
           #docker tag $IMAGE_NAME $IMAGE_ID:ubuntu-latest
-          #docker push $IMAGE_ID:ubuntu-20.04
+          #docker push $IMAGE_ID:ubuntu-latest
