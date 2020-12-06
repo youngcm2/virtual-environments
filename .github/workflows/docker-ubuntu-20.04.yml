@@ -38,6 +38,9 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           echo VERSION=$VERSION
           VERSION=$(echo "$VERSION" | sed -e 's,/,-,i')
+          echo VERSION=$VERSION
+          VERSION="ubuntu-20.04-$VERSION"
+          echo VERSION=$VERSION
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
