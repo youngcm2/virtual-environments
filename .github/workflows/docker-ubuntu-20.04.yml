@@ -34,7 +34,9 @@ jobs:
         run: |
           IMAGE_ID=quay.io/${{ github.repository }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          echo "${{ github.ref }}"
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          echo VERSION=$VERSION
           VERSION=$(echo "$VERSION" | sed -e 's,/,-,i')
 
           echo IMAGE_ID=$IMAGE_ID
